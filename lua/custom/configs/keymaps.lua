@@ -74,7 +74,7 @@ vim.keymap.set('n', '<leader>gg', function()
   end
 
   if not alive then
-    lg_buf = vim.api.nvim_create_buf(true, true)
+    lg_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_call(lg_buf, function() vim.fn.jobstart({ 'lazygit' }, { term = true }) end)
   end
 

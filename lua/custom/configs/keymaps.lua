@@ -61,3 +61,24 @@ vim.keymap.set('n', '<C-S-j>', '<C-w>J', { desc = 'Move window to the lower' })
 vim.keymap.set('n', '<C-S-k>', '<C-w>K', { desc = 'Move window to the upper' })
 vim.keymap.set('n', '<leader>n', function() vim.wo.number = not vim.wo.number end, { desc = 'Toggle line numbers' })
 vim.keymap.set('n', '<leader>rn', function() vim.wo.relativenumber = not vim.wo.relativenumber end, { desc = 'Toggle relative line numbers' })
+local lg_buf -- survives between presses; nil = not started yet
+
+vim.keymap.set('n', '<leader>gg', function()
+  local alive = lg_buf and vim.api.nvim_buf_is_valid(lg_buf) and vim.fn.jobwait({ vim.b[lg_buf].terminal_job_id }, 0)[1] == -1
+
+  -- lazygit already shown here and alive? toggle back to the alternate buffer
+  if alive and vim.api.nvim_win_get_buf(0) == lg_buf then
+    local alt = vim.fn.bufnr '#'
+    if alt ~= -1 and alt ~= lg_buf then vim.api.nvim_win_set_buf(0, alt) end
+    return
+  end
+
+  if not alive then
+    lg_buf = vim.api.nvim_create_buf(true, true)
+    vim.api.nvim_buf_call(lg_buf, function() vim.fn.jobstart({ 'lazygit' }, { term = true }) end)
+  end
+
+  -- alive or freshly spawned: REPLACE current window buffer with lazygit
+  vim.api.nvim_win_set_buf(0, lg_buf)
+  vim.cmd 'startinsert'
+end, { desc = 'Toggle Lazygit' })

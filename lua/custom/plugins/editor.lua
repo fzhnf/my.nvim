@@ -67,8 +67,9 @@ vim.keymap.set('n', '<leader>e', fyler_toggle(), { desc = 'Explorer Fyler' })
 
 -- ============================================================
 -- SEARCH & NAVIGATION
--- Telescope setup, keymaps, LSP picker mappings
+-- fff & flash.nvim
 -- ============================================================
+-- FFF
 vim.pack.add { 'https://github.com/dmtrKovalenko/fff' }
 
 vim.api.nvim_create_autocmd('PackChanged', {
@@ -95,3 +96,9 @@ vim.keymap.set('n', 'fz', function() require('fff').live_grep { grep = { modes =
 vim.keymap.set('n', '<leader>sf', function() require('fff').find_files() end, { desc = '[S]earch [F]iles (fff)' })
 vim.keymap.set('n', '<leader>sg', function() require('fff').live_grep() end, { desc = '[S]earch by [G]rep (fff)' })
 vim.keymap.set({ 'n', 'v' }, '<leader>sw', function() require('fff').live_grep_under_cursor() end, { desc = '[S]earch current [W]ord (fff)' })
+
+-- FLASH
+vim.pack.add { 'https://github.com/folke/flash.nvim' }
+require('fyler').setup()
+vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump() end, { desc = 'Flash' })
+vim.keymap.set({ 'n', 'x', 'o' }, 'S', function() require('flash').treesitter() end, { desc = 'Flash Treesitter' })

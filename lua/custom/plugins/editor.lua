@@ -1,4 +1,7 @@
--- file tree
+-- ============================================================
+-- TREE BASED FILE EXPLORER
+-- fyler.nvim
+-- ============================================================
 vim.pack.add { 'https://github.com/FylerOrg/fyler.nvim' }
 
 require('fyler').setup {
@@ -62,9 +65,10 @@ end
 
 vim.keymap.set('n', '<leader>e', fyler_toggle(), { desc = 'Explorer Fyler' })
 
--- file search & grep
-
--- Package name changed from `fff.nvim` to `fff`. If you installed fff.nvim before, clean with `:packdel fff.nvim`
+-- ============================================================
+-- SEARCH & NAVIGATION
+-- Telescope setup, keymaps, LSP picker mappings
+-- ============================================================
 vim.pack.add { 'https://github.com/dmtrKovalenko/fff' }
 
 vim.api.nvim_create_autocmd('PackChanged', {
@@ -79,7 +83,7 @@ vim.api.nvim_create_autocmd('PackChanged', {
 
 vim.g.fff = {
   lazy_sync = true,
-  debug = { enabled = true, show_scores = true },
+  debug = { enabled = false, show_scores = false },
 }
 
 vim.keymap.set('n', 'ff', function() require('fff').find_files() end, { desc = 'FFFind files' })

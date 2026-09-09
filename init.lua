@@ -148,11 +148,6 @@ do
       local kind = ev.data.kind
       if kind ~= 'install' and kind ~= 'update' then return end
 
-      if name == 'fff' and (kind == 'install' or kind == 'update') then
-        if not ev.data.active then vim.cmd.packadd 'fff' end
-        require('fff.download').download_or_build_binary()
-      end
-
       if name == 'LuaSnip' then
         if vim.fn.has 'win32' ~= 1 and vim.fn.executable 'make' == 1 then run_build(name, { 'make', 'install_jsregexp' }, ev.data.path) end
         return

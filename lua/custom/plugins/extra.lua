@@ -1,4 +1,5 @@
-vim.pack.add { 'https://github.com/vyfor/cord.nvim' }
+local vp = require 'custom.util.vimpack'
+vim.pack.add { vp.gh 'vyfor/cord.nvim' }
 require('cord').setup {
   display = { theme = 'minecraft', flavor = 'accent' },
   buttons = {

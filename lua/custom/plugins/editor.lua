@@ -3,7 +3,7 @@ local vp = require 'custom.util.vimpack'
 -- TREE BASED FILE EXPLORER
 -- fyler.nvim
 -- ============================================================
-vim.pack.add { 'https://github.com/FylerOrg/fyler.nvim' }
+vim.pack.add { vp.gh 'FylerOrg/fyler.nvim' }
 
 require('fyler').setup {
   integrations = { icon = 'mini_icons' },
@@ -71,7 +71,7 @@ vim.keymap.set('n', '<leader>e', fyler_toggle(), { desc = 'Explorer Fyler' })
 -- fff & leap.nvim
 -- ============================================================
 -- FFF
-vim.pack.add { 'https://github.com/dmtrKovalenko/fff' }
+vim.pack.add { vp.gh 'dmtrKovalenko/fff' }
 
 vim.api.nvim_create_autocmd('PackChanged', {
   callback = function(ev)
@@ -131,7 +131,7 @@ end)
 -- FIND & REPLACE
 -- grug-far.nvim
 -- ============================================================
-vim.pack.add { 'https://github.com/MagicDuck/grug-far.nvim' }
+vim.pack.add { vp.gh 'MagicDuck/grug-far.nvim' }
 require('grug-far').setup { headerMaxWidth = 80 }
 vim.keymap.set('n', '<leader>sr', function()
   local grug = require 'grug-far'

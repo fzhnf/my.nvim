@@ -1,4 +1,5 @@
-vim.pack.add { 'https://github.com/nvim-mini/mini.tabline' }
+local vp = require 'custom.util.vimpack'
+vim.pack.add { vp.gh 'nvim-mini/mini.tabline' }
 require('mini.tabline').setup {
   -- Whether to show file icons (requires 'mini.icons')
   show_icons = true,

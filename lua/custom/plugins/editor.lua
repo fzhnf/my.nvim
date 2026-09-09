@@ -102,3 +102,20 @@ vim.pack.add { 'https://github.com/folke/flash.nvim' }
 require('fyler').setup()
 vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump() end, { desc = 'Flash' })
 vim.keymap.set({ 'n', 'x', 'o' }, 'S', function() require('flash').treesitter() end, { desc = 'Flash Treesitter' })
+
+-- ============================================================
+-- FIND & REPLACE
+-- fff & flash.nvim
+-- ============================================================
+vim.pack.add { 'https://github.com/MagicDuck/grug-far.nvim' }
+require('grug-far').setup { headerMaxWidth = 80 }
+vim.keymap.set('n', '<leader>sr', function()
+  local grug = require 'grug-far'
+  local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
+  grug.open {
+    transient = true,
+    prefills = {
+      filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
+    },
+  }
+end, { desc = 'Explorer Fyler' })

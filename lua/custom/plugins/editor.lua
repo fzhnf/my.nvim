@@ -67,7 +67,7 @@ vim.keymap.set('n', '<leader>e', fyler_toggle(), { desc = 'Explorer Fyler' })
 
 -- ============================================================
 -- SEARCH & NAVIGATION
--- fff & flash.nvim
+-- fff & leap.nvim
 -- ============================================================
 -- FFF
 vim.pack.add { 'https://github.com/dmtrKovalenko/fff' }
@@ -97,15 +97,42 @@ vim.keymap.set('n', '<leader>sf', function() require('fff').find_files() end, { 
 vim.keymap.set('n', '<leader>sg', function() require('fff').live_grep() end, { desc = '[S]earch by [G]rep (fff)' })
 vim.keymap.set({ 'n', 'v' }, '<leader>sw', function() require('fff').live_grep_under_cursor() end, { desc = '[S]earch current [W]ord (fff)' })
 
--- FLASH
-vim.pack.add { 'https://github.com/folke/flash.nvim' }
-require('fyler').setup()
-vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump() end, { desc = 'Flash' })
-vim.keymap.set({ 'n', 'x', 'o' }, 'S', function() require('flash').treesitter() end, { desc = 'Flash Treesitter' })
+-- LEAP.NVIM
+vim.pack.add { 'https://codeberg.org/andyg/leap.nvim' }
+require('leap').opts.preview = false
+require('leap.user').set_backdrop_highlight 'Comment'
+
+vim.keymap.set({ 'n', 'x', 'o' }, 's', '<Plug>(leap)')
+vim.keymap.set('n', 'S', '<Plug>(leap-from-window)')
+
+-- Visit (jump - operate - jump back)
+vim.keymap.set({ 'n', 'x', 'o' }, 'gs', '<Plug>(leap-visit)')
+vim.keymap.set({ 'x', 'o' }, 'ar', '<Plug>(leap-visit-text-object)')
+vim.keymap.set({ 'x', 'o' }, 'ir', '<Plug>(leap-visit-inner-text-object)')
+
+vim.keymap.set('o', 'rr', function() -- "visit line" shortcut
+  return (vim.v.count == 0 and '1' or '') .. '<Plug>(leap-visit)'
+end, { expr = true })
+
+-- Automatic paste on return.
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'VisitDone',
+  group = vim.api.nvim_create_augroup('Visit', {}),
+  callback = function(event)
+    if (event.data.mode:match '^[vV\22]' or (vim.v.operator == 'y')) and event.data.register == '"' then vim.cmd 'normal! p' end
+  end,
+})
+
+-- Treeselect
+vim.keymap.set({ 'x', 'o' }, 'an', function()
+  require('leap.treesitter').select {
+    opts = require('leap.user').with_traversal_keys('n', 'N'),
+  }
+end)
 
 -- ============================================================
 -- FIND & REPLACE
--- fff & flash.nvim
+-- grug-far.nvim
 -- ============================================================
 vim.pack.add { 'https://github.com/MagicDuck/grug-far.nvim' }
 require('grug-far').setup { headerMaxWidth = 80 }

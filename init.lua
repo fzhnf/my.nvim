@@ -162,12 +162,7 @@ do
   })
 end
 
----Because most plugins are hosted on GitHub, you can use the helper
----function to have less repetition in the following sections.
----@param repo string
----@return string
-local function gh(repo) return 'https://github.com/' .. repo end
-
+local vp = require 'custom.util.vimpack'
 -- ============================================================
 -- SECTION 4: UI / CORE UX PLUGINS
 -- guess-indent, gitsigns, which-key, colorscheme, todo-comments, mini modules
@@ -186,67 +181,11 @@ do
   --
   -- We first install it from https://github.com/NMAC427/guess-indent.nvim
   -- and then call its `setup()` function to start it with default settings.
-  vim.pack.add { gh 'NMAC427/guess-indent.nvim' }
+  vim.pack.add { vp.gh 'NMAC427/guess-indent.nvim' }
   require('guess-indent').setup {}
 
-  -- Here is a more advanced configuration example that passes options to `gitsigns.nvim`
-  --
-  -- See `:help gitsigns` to understand what each configuration key does.
-  -- Adds git related signs to the gutter, as well as utilities for managing changes
-  vim.pack.add { gh 'lewis6991/gitsigns.nvim' }
-  local gitsigns = require 'gitsigns'
-  gitsigns.setup {
-    signs = {
-      add = { text = '+' }, ---@diagnostic disable-line: missing-fields
-      change = { text = '~' }, ---@diagnostic disable-line: missing-fields
-      delete = { text = '_' }, ---@diagnostic disable-line: missing-fields
-      topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
-      changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
-    },
-    -- gitsigns.nvim's recommended keymaps:
-    on_attach = function(bufnr)
-      -- Navigation
-      vim.keymap.set('n', ']c', function()
-        if vim.wo.diff then
-          vim.cmd.normal { ']c', bang = true }
-        else
-          gitsigns.nav_hunk 'next'
-        end
-      end, { desc = 'Jump to next git [c]hange', buf = bufnr })
-
-      vim.keymap.set('n', '[c', function()
-        if vim.wo.diff then
-          vim.cmd.normal { '[c', bang = true }
-        else
-          gitsigns.nav_hunk 'prev'
-        end
-      end, { desc = 'Jump to previous git [c]hange', buf = bufnr })
-
-      -- Visual mode actions
-      vim.keymap.set('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [s]tage hunk', buf = bufnr })
-      vim.keymap.set('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [r]eset hunk', buf = bufnr })
-      -- Normal mode actions
-      vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk', buf = bufnr })
-      vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk', buf = bufnr })
-      vim.keymap.set('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer', buf = bufnr })
-      vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer', buf = bufnr })
-      vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk', buf = bufnr })
-      vim.keymap.set('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = 'git preview hunk [i]nline', buf = bufnr })
-      vim.keymap.set('n', '<leader>hb', function() gitsigns.blame_line { full = true } end, { desc = 'git [b]lame line', buf = bufnr })
-      vim.keymap.set('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index', buf = bufnr })
-      vim.keymap.set('n', '<leader>hD', function() gitsigns.diffthis '~' end, { desc = 'git [D]iff against last commit', buf = bufnr })
-      vim.keymap.set('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'git hunk [Q]uickfix list (all files in repo)', buf = bufnr })
-      vim.keymap.set('n', '<leader>hq', gitsigns.setqflist, { desc = 'git hunk [q]uickfix list (all changes in this file)', buf = bufnr })
-      -- Toggles
-      vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })
-      vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })
-      -- Text object
-      vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = 'text object [i]nside [h]unk', buf = bufnr })
-    end,
-  }
-
   -- Useful plugin to show you pending keybinds.
-  vim.pack.add { gh 'folke/which-key.nvim' }
+  vim.pack.add { vp.gh 'folke/which-key.nvim' }
   require('which-key').setup {
     -- Delay between pressing a key and opening which-key (milliseconds)
     delay = 0,
@@ -265,7 +204,7 @@ do
   -- Change the name of the colorscheme plugin below, and then
   -- change the command under that to load whatever the name of that colorscheme is.
   --
-  -- vim.pack.add { gh 'folke/tokyonight.nvim' }
+  -- vim.pack.add { vp.gh 'folke/tokyonight.nvim' }
   vim.pack.add {
     {
       src = 'https://github.com/rose-pine/neovim',
@@ -282,12 +221,12 @@ do
   vim.cmd.colorscheme 'rose-pine'
 
   -- Highlight todo, notes, etc in comments
-  vim.pack.add { gh 'folke/todo-comments.nvim' }
+  vim.pack.add { vp.gh 'folke/todo-comments.nvim' }
   require('todo-comments').setup { signs = false }
 
   -- [[ mini.nvim ]]
   --  A collection of various small independent plugins/modules
-  vim.pack.add { gh 'nvim-mini/mini.nvim' }
+  vim.pack.add { vp.gh 'nvim-mini/mini.nvim' }
 
   -- If a nerd font is available, load the icons module for pretty icons in various plugins.
   if vim.g.have_nerd_font then
@@ -367,7 +306,7 @@ do
   -- and elegantly composed help section, `:help lsp-vs-treesitter`
 
   -- Useful status updates for LSP.
-  vim.pack.add { gh 'j-hui/fidget.nvim' }
+  vim.pack.add { vp.gh 'j-hui/fidget.nvim' }
   require('fidget').setup {}
 
   --  This function gets run when an LSP attaches to a particular buffer.
@@ -490,10 +429,10 @@ do
   }
 
   vim.pack.add {
-    gh 'neovim/nvim-lspconfig',
-    gh 'mason-org/mason.nvim',
-    gh 'mason-org/mason-lspconfig.nvim',
-    gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
+    vp.gh 'neovim/nvim-lspconfig',
+    vp.gh 'mason-org/mason.nvim',
+    vp.gh 'mason-org/mason-lspconfig.nvim',
+    vp.gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
   }
 
   -- Automatically install LSPs and related tools to stdpath for Neovim
@@ -530,7 +469,7 @@ end
 -- ============================================================
 do
   -- [[ Formatting ]]
-  vim.pack.add { gh 'stevearc/conform.nvim' }
+  vim.pack.add { vp.gh 'stevearc/conform.nvim' }
   require('conform').setup {
     notify_on_error = false,
     format_on_save = function(bufnr)
@@ -571,18 +510,18 @@ do
 
   -- NOTE: You can also specify plugin using a version range for its git tag.
   --  See `:help vim.version.range()` for more info
-  vim.pack.add { { src = gh 'L3MON4D3/LuaSnip', version = vim.version.range '2.*' } }
+  vim.pack.add { { src = vp.gh 'L3MON4D3/LuaSnip', version = vim.version.range '2.*' } }
   require('luasnip').setup {}
 
   -- `friendly-snippets` contains a variety of premade snippets.
   --    See the README about individual language/framework/plugin snippets:
   --    https://github.com/rafamadriz/friendly-snippets
   --
-  vim.pack.add { gh 'rafamadriz/friendly-snippets' }
+  vim.pack.add { vp.gh 'rafamadriz/friendly-snippets' }
   require('luasnip.loaders.from_vscode').lazy_load()
 
   -- [[ Autocomplete Engine ]]
-  vim.pack.add { { src = gh 'saghen/blink.cmp', version = vim.version.range '1.*' } }
+  vim.pack.add { { src = vp.gh 'saghen/blink.cmp', version = vim.version.range '1.*' } }
   require('blink.cmp').setup {
     keymap = {
       -- 'default' (recommended) for mappings similar to built-in completions
@@ -655,7 +594,7 @@ do
   --  See `:help nvim-treesitter-intro`
 
   -- NOTE: You can also specify a branch or a specific commit
-  vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
+  vim.pack.add { { src = vp.gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
   local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }

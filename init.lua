@@ -192,10 +192,14 @@ do
     icons = { mappings = vim.g.have_nerd_font },
     -- Document existing key chains
     spec = {
+      { '<leader>b', group = '[B]uffers', mode = { 'n', 'v' } },
+      { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
+      { '<leader>f', group = '[F]ind', mode = { 'n', 'v' } },
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
       { '<leader>t', group = '[T]oggle' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
-      { 'gr', group = 'LSP Actions', mode = { 'n' } },
+      { '<leader>u', group = '[U]I Toggles', mode = { 'n', 'v' } },
+      { '<leader>x', group = 'Diagnostics / [Q]uickfix', mode = { 'n', 'v' } },
     },
   }
 
@@ -326,17 +330,17 @@ do
         vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
       end
 
-      -- Rename the variable under your cursor.
-      --  Most Language Servers support renaming across files, etc.
-      map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
+      -- Goto keys
+      map('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
+      map('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+      map('gy', vim.lsp.buf.type_definition, '[G]oto T[y]pe Definition')
+      map('gK', vim.lsp.buf.signature_help, 'Signature Help')
+      map('<c-k>', vim.lsp.buf.signature_help, 'Signature Help', 'i')
 
-      -- Execute a code action, usually your cursor needs to be on top of an error
-      -- or a suggestion from your LSP for this to activate.
-      map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
-
-      -- WARN: This is not Goto Definition, this is Goto Declaration.
-      --  For example, in C this would take you to the header.
-      map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+      -- Actions
+      map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+      map('<leader>cr', vim.lsp.buf.rename, '[C]ode [R]ename')
+      map('<leader>cA', function() vim.lsp.buf.code_action { context = { only = { 'source' }, diagnostics = {} } } end, '[C]ode Source [A]ction')
 
       -- The following two autocommands are used to highlight references of the
       -- word under your cursor when your cursor rests there for a little while.
@@ -372,7 +376,7 @@ do
       --
       -- This may be unwanted, since they displace some of your code
       if client and client:supports_method('textDocument/inlayHint', event.buf) then
-        map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+        map('<leader>uh', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, 'Toggle Inlay [H]ints')
       end
     end,
   })
@@ -498,7 +502,7 @@ do
     },
   }
 
-  vim.keymap.set({ 'n', 'v' }, '<leader>f', function() require('conform').format { async = true } end, { desc = '[F]ormat buffer' })
+  vim.keymap.set({ 'n', 'v' }, '<leader>cf', function() require('conform').format { async = true } end, { desc = '[C]ode [F]ormat' })
 end
 
 -- ============================================================

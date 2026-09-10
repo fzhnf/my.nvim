@@ -10,7 +10,7 @@ require('fyler').setup {
   use_as_default_explorer = true,
   kind = 'split_right_most',
   kind_presets = { split_right_most = { width = '20%' } },
-  win_opts = { winhighlight = 'Normal:NormalFloat' },
+  win_opts = { winhighlight = 'Normal:NormalFloat', fillchars = 'eob: ' },
   extensions = {
     trash = { enabled = true },
     git = { enabled = true },
@@ -51,20 +51,18 @@ require('fyler').setup {
 }
 
 local function fyler_toggle()
-  return function()
-    local finder = require 'fyler.finder'
-    local inst = finder.instance_get_or_nil()
-    if not inst then
-      require('fyler').open { root_path = vim.uv.cwd() }
-    elseif inst.win_id == vim.api.nvim_get_current_win() then
-      require('fyler').close()
-    else
-      vim.api.nvim_set_current_win(inst.win_id)
-    end
+  local finder = require 'fyler.finder'
+  local inst = finder.instance_get_or_nil()
+  if not inst then
+    require('fyler').open { root_path = vim.uv.cwd() }
+  elseif inst.win_id == vim.api.nvim_get_current_win() then
+    require('fyler').close()
+  else
+    vim.api.nvim_set_current_win(inst.win_id)
   end
 end
 
-vim.keymap.set('n', '<leader>e', fyler_toggle(), { desc = 'Explorer Fyler' })
+vim.keymap.set('n', '<leader>e', function() fyler_toggle() end, { desc = 'Explorer Fyler' })
 
 -- ============================================================
 -- SEARCH & NAVIGATION

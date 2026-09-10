@@ -204,3 +204,7 @@ gitsigns.setup {
     vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = 'text object [i]nside [h]unk', buf = bufnr })
   end,
 }
+
+-- Highlight todo, notes, etc in comments
+vim.pack.add { vp.gh 'folke/todo-comments.nvim' }
+require('todo-comments').setup { signs = false }

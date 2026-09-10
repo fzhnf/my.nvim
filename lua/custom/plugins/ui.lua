@@ -1,5 +1,5 @@
 local vp = require 'custom.util.vimpack_helper'
-vim.pack.add { vp.gh 'nvim-mini/mini.tabline' }
+
 require('mini.tabline').setup {
   -- Whether to show file icons (requires 'mini.icons')
   show_icons = true,
@@ -15,6 +15,6 @@ require('mini.tabline').setup {
 vim.keymap.set('n', '<S-h>', '<Cmd>bprevious<CR>', { desc = 'Prev Buffer' })
 vim.keymap.set('n', '<S-l>', '<Cmd>bnext<CR>', { desc = 'Next Buffer' })
 
-vim.pack.add { 'https://github.com/rachartier/tiny-cmdline.nvim' }
+vim.pack.add { vp.gh 'rachartier/tiny-cmdline.nvim' }
 require('vim._core.ui2').enable {}
 vim.o.cmdheight = 0

@@ -5,4 +5,8 @@ local vp = require 'custom.util.vimpack_helper'
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help ibl`
 vim.pack.add { vp.gh 'lukas-reineke/indent-blankline.nvim' }
-require('ibl').setup {}
+require('ibl').setup {
+  exclude = {
+    filetypes = { 'dashboard' },
+  },
+}

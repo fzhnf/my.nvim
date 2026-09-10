@@ -162,7 +162,7 @@ do
   })
 end
 
-local vp = require 'custom.util.vimpack'
+local vp = require 'custom.util.vimpack_helper'
 -- ============================================================
 -- SECTION 4: UI / CORE UX PLUGINS
 -- guess-indent, gitsigns, which-key, colorscheme, todo-comments, mini modules

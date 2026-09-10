@@ -1,4 +1,4 @@
-local vp = require 'custom.util.vimpack'
+local vp = require 'custom.util.vimpack_helper'
 
 -- autopairs
 -- https://github.com/windwp/nvim-autopairs

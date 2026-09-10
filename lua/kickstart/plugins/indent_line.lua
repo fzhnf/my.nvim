@@ -1,4 +1,4 @@
-local vp = require 'custom.util.vimpack'
+local vp = require 'custom.util.vimpack_helper'
 
 -- Add indentation guides even on blank lines
 

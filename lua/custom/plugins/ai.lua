@@ -1,4 +1,4 @@
-local vp = require 'custom.util.vimpack'
+local vp = require 'custom.util.vimpack_helper'
 
 vim.pack.add { vp.gh 'zbirenbaum/copilot.lua' }
 require('copilot').setup {

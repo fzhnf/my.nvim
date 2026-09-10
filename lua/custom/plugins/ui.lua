@@ -26,7 +26,11 @@ require('fidget').setup {}
 -- put persisted before dashboard-nvim, one row in dashboard-nvim depends on
 -- persisted's session existence
 vim.pack.add { vp.gh 'olimorris/persisted.nvim' }
-require('persisted').setup()
+require('persisted').setup {
+  before_save = function()
+    if require('fyler.finder').instance_get_or_nil() then require('fyler').close() end
+  end,
+}
 vim.keymap.set('n', '<leader>qs', function() require('persisted').load() end, { desc = 'Restore Session' })
 vim.keymap.set('n', '<leader>qS', function() require('persisted').select() end, { desc = 'Select Session' })
 vim.keymap.set('n', '<leader>ql', function() require('persisted').load { last = true } end, { desc = 'Restore Last Session' })

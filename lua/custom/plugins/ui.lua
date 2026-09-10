@@ -18,3 +18,7 @@ vim.keymap.set('n', '<S-l>', '<Cmd>bnext<CR>', { desc = 'Next Buffer' })
 vim.pack.add { vp.gh 'rachartier/tiny-cmdline.nvim' }
 require('vim._core.ui2').enable {}
 vim.o.cmdheight = 0
+
+-- Useful status updates for LSP.
+vim.pack.add { vp.gh 'j-hui/fidget.nvim' }
+require('fidget').setup {}

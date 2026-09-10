@@ -23,15 +23,41 @@ vim.o.cmdheight = 0
 vim.pack.add { vp.gh 'j-hui/fidget.nvim' }
 require('fidget').setup {}
 
+-- put persisted before dashboard-nvim, one row in dashboard-nvim depends on
+-- persisted's session existence
+vim.pack.add { vp.gh 'olimorris/persisted.nvim' }
+require('persisted').setup()
+vim.keymap.set('n', '<leader>qs', function() require('persisted').load() end, { desc = 'Restore Session' })
+vim.keymap.set('n', '<leader>qS', function() require('persisted').select() end, { desc = 'Select Session' })
+vim.keymap.set('n', '<leader>ql', function() require('persisted').load { last = true } end, { desc = 'Restore Last Session' })
+vim.keymap.set('n', '<leader>qd', function() require('persisted').stop() end, { desc = "Don't Save Current Session" })
+
 vim.pack.add { vp.gh 'nvimdev/dashboard-nvim' }
+local center = {
+  { icon = ' ', desc = 'Find File', key = 'f', action = "lua require('fff').find_files()" },
+  { icon = ' ', desc = 'New File', key = 'n', action = 'ene | startinsert' },
+  { icon = ' ', desc = 'Find Text', key = 'g', action = "lua require('fff').live_grep()" },
+  { icon = ' ', desc = 'Recent Files', key = 'r', action = "lua require('mini.pick').start({source={name='Recent Files', items=vim.v.oldfiles}})" },
+  { icon = ' ', desc = 'Config', key = 'c', action = "lua require('mini.pick').builtin.files({}, {source={cwd=vim.fn.stdpath('config')}})" },
+  { icon = ' ', desc = 'Quit', key = 'q', action = 'qa' },
+}
+local has_session = vim.fn.filereadable(require('persisted').current()) == 1
+if has_session then
+  table.insert(center, #center, {
+    icon = '󰦛 ',
+    desc = 'Restore Session',
+    key = 's',
+    action = "lua require('persisted').load()",
+  })
+end
 require('dashboard').setup {
   theme = 'doom',
+  config = { center = center },
 }
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'dashboard' },
   callback = function(ev)
-    -- fillchars is window-local; grab this buffer's window
     local win = vim.iter(vim.api.nvim_list_wins()):find(function(w) return vim.api.nvim_win_get_buf(w) == ev.buf end)
     if win then vim.wo[win].fillchars = 'eob: ' end
   end,

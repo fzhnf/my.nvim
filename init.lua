@@ -193,6 +193,7 @@ do
     -- Document existing key chains
     spec = {
       { '<leader>b', group = '[B]uffers', mode = { 'n', 'v' } },
+      { '<leader>q', group = 'Session [Q]uery', mode = { 'n', 'v' } },
       { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
       { '<leader>f', group = '[F]ind', mode = { 'n', 'v' } },
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },

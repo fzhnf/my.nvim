@@ -1,4 +1,8 @@
-vim.lsp.enable 'phpactor'
+local lang = require 'custom.util.lang'
+lang.add_parser 'php'
+lang.add_parser 'php_only'
+lang.add_parser 'blade'
+lang.add_tool 'phpactor'
 
 vim.lsp.config('laravel_lsp', {
   cmd = { 'laravel-lsp' },
@@ -9,4 +13,5 @@ vim.lsp.config('laravel_lsp', {
   end,
 })
 
+vim.lsp.enable 'phpactor'
 vim.lsp.enable 'laravel_lsp'

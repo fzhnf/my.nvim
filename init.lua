@@ -447,18 +447,11 @@ do
   --    :Mason
   --
   -- You can press `g?` for help in this menu.
-  local ensure_installed = vim.tbl_keys(servers or {})
-  vim.list_extend(ensure_installed, {
-    -- You can add other tools here that you want Mason to install
-    'phpactor',
-  })
-
-  require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
   for name, server in pairs(servers) do
     vim.lsp.config(name, server)
     vim.lsp.enable(name)
   end
+  vim.list_extend(require('custom.util.lang').tools, vim.tbl_keys(servers or {}))
 end
 
 -- ============================================================
@@ -615,9 +608,6 @@ do
     'query',
     'vim',
     'vimdoc',
-    'php',
-    'php_only',
-    'blade',
     'html',
     'css',
     'javascript',
@@ -702,8 +692,14 @@ do
   -- require 'custom.plugins.ui'
   -- require 'custom.plugins.git'
 
-  -- lang spesific configs/plugins
-  require 'custom.lang'
+  local lang = require 'custom.util.lang'
+  local lang_dir = vim.fn.stdpath 'config' .. '/lua/custom/lang'
+  for file in vim.fs.dir(lang_dir) do
+    if file:match '%.lua$' then require('custom.lang.' .. file:gsub('%.lua$', '')) end
+  end
+  local parsers, tools = lang.parsers, lang.tools
+  require('nvim-treesitter').install(parsers)
+  require('mason-tool-installer').setup { ensure_installed = tools }
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`

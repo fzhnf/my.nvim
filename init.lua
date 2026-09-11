@@ -603,7 +603,25 @@ do
   vim.pack.add { { src = vp.gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  local parsers = {
+    'bash',
+    'c',
+    'diff',
+    'html',
+    'lua',
+    'luadoc',
+    'markdown',
+    'markdown_inline',
+    'query',
+    'vim',
+    'vimdoc',
+    'php',
+    'php_only',
+    'blade',
+    'html',
+    'css',
+    'javascript',
+  }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -683,6 +701,9 @@ do
   -- require 'custom.plugins.colorscheme'
   -- require 'custom.plugins.ui'
   -- require 'custom.plugins.git'
+
+  -- lang spesific configs/plugins
+  require 'custom.lang'
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`

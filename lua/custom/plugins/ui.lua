@@ -75,6 +75,9 @@ require('dashboard').setup {
   },
 }
 vim.api.nvim_set_hl(0, 'DashboardHeader', { link = 'String' })
+vim.api.nvim_set_hl(0, 'DashboardIcon', { link = 'Type' })
+vim.api.nvim_set_hl(0, 'DashboardDesc', { link = 'Function' })
+vim.api.nvim_set_hl(0, 'DashboardKey', { link = 'Keyword' })
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'dashboard' },
   callback = function(ev)

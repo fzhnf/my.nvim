@@ -50,17 +50,17 @@ local header = [[
 ]]
 
 local center = {
-  { icon = ' ', desc = 'Find File', key = 'f', action = "lua require('fff').find_files()" },
-  { icon = ' ', desc = 'New File', key = 'n', action = 'ene | startinsert' },
-  { icon = ' ', desc = 'Find Text', key = 'g', action = "lua require('fff').live_grep()" },
-  { icon = ' ', desc = 'Recent Files', key = 'r', action = "lua require('mini.pick').start({source={name='Recent Files', items=vim.v.oldfiles}})" },
-  { icon = ' ', desc = 'Config', key = 'c', action = "lua require('mini.pick').builtin.files({}, {source={cwd=vim.fn.stdpath('config')}})" },
-  { icon = ' ', desc = 'Quit', key = 'q', action = 'qa' },
+  { icon = '󰈞  ', desc = 'Find File', key = 'f', action = "lua require('fff').find_files()" },
+  { icon = '󰝒  ', desc = 'New File', key = 'n', action = 'ene | startinsert' },
+  { icon = '󰱼  ', desc = 'Find Text', key = 'g', action = "lua require('fff').live_grep()" },
+  { icon = '󰄉  ', desc = 'Recent Files', key = 'r', action = "lua require('mini.pick').start({source={name='Recent Files', items=vim.v.oldfiles}})" },
+  { icon = '󰒓  ', desc = 'Config', key = 'c', action = "lua require('mini.pick').builtin.files({}, {source={cwd=vim.fn.stdpath('config')}})" },
+  { icon = '󰈆  ', desc = 'Quit', key = 'q', action = 'qa' },
 }
 local has_session = vim.fn.filereadable(require('persisted').current()) == 1
 if has_session then
   table.insert(center, #center, {
-    icon = '󰦛 ',
+    icon = '󰦛  ',
     desc = 'Restore Session',
     key = 's',
     action = "lua require('persisted').load()",

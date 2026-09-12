@@ -731,7 +731,7 @@ do
   end
   local parsers, tools = lang.parsers, lang.tools
   require('nvim-treesitter').install(parsers)
-  require('mason-tool-installer').setup { ensure_installed = tools }
+  vim.schedule(function() require('mason-tool-installer').setup { ensure_installed = tools } end)
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`

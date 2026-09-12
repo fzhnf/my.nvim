@@ -3,9 +3,13 @@ local vp = require 'custom.util.vimpack_helper'
 -- TREE BASED FILE EXPLORER
 -- fyler.nvim
 -- ============================================================
-vim.pack.add { vp.gh 'FylerOrg/fyler.nvim' }
+-- All four tools in this file (fyler, fff, leap, grug-far) are on-demand UI
+-- tools: defer past first draw (guide: "load not during startup"). Keymaps
+-- below resolve plugins lazily and are safe to define immediately.
+vim.schedule(function()
+  vim.pack.add { vp.gh 'FylerOrg/fyler.nvim' }
 
-require('fyler').setup {
+  require('fyler').setup {
   integrations = { icon = 'mini_icons' },
   use_as_default_explorer = true,
   kind = 'split_right_most',
@@ -48,7 +52,8 @@ require('fyler').setup {
       },
     },
   },
-}
+  }
+end)
 
 local function fyler_toggle()
   local finder = require 'fyler.finder'
@@ -69,11 +74,15 @@ vim.keymap.set('n', '<leader>e', function() fyler_toggle() end, { desc = 'Explor
 -- fff & leap.nvim
 -- ============================================================
 -- FFF
-vim.pack.add { vp.gh 'dmtrKovalenko/fff' }
-vim.g.fff = {
-  lazy_sync = true,
-  debug = { enabled = false, show_scores = false },
-}
+vim.schedule(function()
+  vim.g.fff = {
+    lazy_sync = true,
+    debug = { enabled = false, show_scores = false },
+  }
+  -- post-init `vim.pack.add` sources `plugin/` scripts immediately (load=true
+  -- default), so the config must be set before the add.
+  vim.pack.add { vp.gh 'dmtrKovalenko/fff' }
+end)
 
 vim.keymap.set('n', '<leader><space>', function() require('fff').find_files() end, { desc = 'FFFind files' })
 vim.keymap.set('n', '<leader>ff', function() require('fff').find_files() end, { desc = '[S]ind [F]iles (fff)' })
@@ -82,9 +91,11 @@ vim.keymap.set({ 'n', 'v' }, '<leader>sw', function() require('fff').live_grep_u
 vim.keymap.set('n', '<leader>sz', function() require('fff').live_grep { grep = { modes = { 'fuzzy', 'plain' } } } end, { desc = '[S]earch f[u]zzy (fff)' })
 
 -- LEAP.NVIM
-vim.pack.add { 'https://codeberg.org/andyg/leap.nvim' }
-require('leap').opts.preview = false
-require('leap.user').set_backdrop_highlight 'Comment'
+vim.schedule(function()
+  vim.pack.add { 'https://codeberg.org/andyg/leap.nvim' }
+  require('leap').opts.preview = false
+  require('leap.user').set_backdrop_highlight 'Comment'
+end)
 
 vim.keymap.set({ 'n', 'x', 'o' }, 's', '<Plug>(leap)')
 vim.keymap.set('n', 'S', '<Plug>(leap-from-window)')
@@ -118,8 +129,10 @@ end)
 -- FIND & REPLACE
 -- grug-far.nvim
 -- ============================================================
-vim.pack.add { vp.gh 'MagicDuck/grug-far.nvim' }
-require('grug-far').setup { headerMaxWidth = 80 }
+vim.schedule(function()
+  vim.pack.add { vp.gh 'MagicDuck/grug-far.nvim' }
+  require('grug-far').setup { headerMaxWidth = 80 }
+end)
 vim.keymap.set('n', '<leader>sr', function()
   local grug = require 'grug-far'
   local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'

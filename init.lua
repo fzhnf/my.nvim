@@ -148,6 +148,20 @@ do
       local kind = ev.data.kind
       if kind ~= 'install' and kind ~= 'update' then return end
 
+      if name == 'markdown-preview.nvim' then
+        if not ev.data.active then vim.cmd.packadd { args = { 'markdown-preview.nvim' }, bang = true } end
+        local cwd = vim.fn.getcwd()
+        vim.fn['mkdp#util#install_sync']()
+        vim.cmd('lcd ' .. vim.fn.fnameescape(cwd))
+        return
+      end
+
+      if name == 'fff' then
+        if not ev.data.active then vim.cmd.packadd 'fff' end
+        require('fff.download').download_or_build_binary()
+        return
+      end
+
       if name == 'LuaSnip' then
         if vim.fn.has 'win32' ~= 1 and vim.fn.executable 'make' == 1 then run_build(name, { 'make', 'install_jsregexp' }, ev.data.path) end
         return

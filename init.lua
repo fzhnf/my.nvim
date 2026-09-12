@@ -102,7 +102,7 @@ do
     'zipPlugin',
     'gzip',
     'tarPlugin',
-    'tutor',
+    'tutor_mode_plugin',
   }
   for _, plugin in ipairs(loaded_skip) do
     vim.g['loaded_' .. plugin] = 1

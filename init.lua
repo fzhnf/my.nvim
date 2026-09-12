@@ -89,6 +89,24 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- Core Neovim settings, leaders, options
 -- ============================================================
 do
+  -- Enable faster startup by caching compiled Lua modules
+  vim.loader.enable()
+
+  local loaded_skip = {
+    'netrw',
+    'netrwPlugin',
+    'netrwSettings',
+    'netrwFileHandlers',
+    'matchit',
+    'matchparen',
+    'zipPlugin',
+    'gzip',
+    'tarPlugin',
+    'tutor',
+  }
+  for _, plugin in ipairs(loaded_skip) do
+    vim.g['loaded_' .. plugin] = 1
+  end
   require 'custom.configs.options'
 end
 

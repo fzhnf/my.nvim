@@ -24,6 +24,11 @@ vim.o.mouse = 'a'
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
 
+-- hide cmdline stays at the bottom,cmdline still
+-- show in neovim ui2 configured by tiny-cmdline
+-- plugin.
+vim.o.cmdheight = 0
+
 -- Show pending keys (partial motions like "d5") in the statusline via %S
 vim.o.showcmdloc = 'statusline'
 

@@ -15,9 +15,13 @@ require('mini.tabline').setup {
 vim.keymap.set('n', '<S-h>', '<Cmd>bprevious<CR>', { desc = 'Prev Buffer' })
 vim.keymap.set('n', '<S-l>', '<Cmd>bnext<CR>', { desc = 'Next Buffer' })
 
-vim.pack.add { vp.gh 'rachartier/tiny-cmdline.nvim' }
 require('vim._core.ui2').enable {}
-vim.o.cmdheight = 0
+vim.pack.add { vp.gh 'rachartier/tiny-cmdline.nvim' }
+
+---@diagnostic disable-next-line: missing-fields
+require('tiny-cmdline').setup {
+  on_reposition = require('tiny-cmdline').adapters.blink,
+}
 
 -- Useful status updates for LSP.
 vim.pack.add { vp.gh 'j-hui/fidget.nvim' }

@@ -97,7 +97,7 @@ vim.schedule(function()
   require('leap.user').set_backdrop_highlight 'Comment'
 end)
 
-vim.keymap.set({ 'n', 'x', 'o' }, 's', '<Plug>(leap)')
+vim.keymap.set({ 'n', 'x', 'o' }, '<CR>', '<Plug>(leap)')
 vim.keymap.set('n', 'S', '<Plug>(leap-from-window)')
 
 -- Visit (jump - operate - jump back)

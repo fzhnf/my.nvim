@@ -723,7 +723,7 @@ do
   -- NOTE: You can add your own plugins, configuration, etc. in `lua/custom/plugins/*.lua`.
   --
   -- For independent modules, uncomment the convenience loader:
-  require 'custom.plugins'
+  -- require 'custom.plugins'
   --
   -- `custom.plugins` automatically loads files from that directory, but their
   -- order is unspecified. If plugins depend on each other, keep them in the same
@@ -733,6 +733,12 @@ do
   -- require 'custom.plugins.colorscheme'
   -- require 'custom.plugins.ui'
   -- require 'custom.plugins.git'
+  --
+  require 'custom.plugins.ai'
+  -- require 'custom.plugins.coding'
+  require 'custom.plugins.editor'
+  require 'custom.plugins.extra'
+  require 'custom.plugins.ui'
 
   local lang = require 'custom.util.lang'
   local lang_dir = vim.fn.stdpath 'config' .. '/lua/custom/lang'

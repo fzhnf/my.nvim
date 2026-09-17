@@ -10,48 +10,48 @@ vim.schedule(function()
   vim.pack.add { vp.gh 'FylerOrg/fyler.nvim' }
 
   require('fyler').setup {
-  integrations = { icon = 'mini_icons' },
-  use_as_default_explorer = true,
-  kind = 'split_right_most',
-  kind_presets = { split_right_most = { width = '20%' } },
-  win_opts = { winhighlight = 'Normal:NormalFloat', fillchars = 'eob: ' },
-  extensions = {
-    trash = { enabled = true },
-    git = { enabled = true },
-  },
-  mappings = {
-    n = {
-      ['<leader>E'] = { action = 'close' },
-      ['<C-S>'] = { disabled = true },
-      ['<C-V>'] = { disabled = true },
-      ['s'] = { action = 'select', args = { vsplit = true } },
-      ['S'] = { action = 'select', args = { split = true } },
-      ['-'] = { action = 'visit', args = { parent = true } },
-      -- Copy Path (Y)
-      ['Y'] = {
-        action = function(self)
-          local node = require('fyler.finder').parse_cursor_line(self)
-          if node and node.path then
-            vim.fn.setreg('+', node.path)
-            vim.notify('Copied: ' .. node.path)
-          end
-        end,
-      },
-      -- Open with System App (O), default xdg-open
-      ['O'] = {
-        action = function(self)
-          local node = require('fyler.finder').parse_cursor_line(self)
-          if node and node.path then
-            if vim.ui.open then
-              vim.ui.open(node.path)
-            else
-              vim.cmd('!xdg-open ' .. vim.fn.shellescape(node.path))
+    integrations = { icon = 'mini_icons' },
+    use_as_default_explorer = true,
+    kind = 'split_right_most',
+    kind_presets = { split_right_most = { width = '20%' } },
+    win_opts = { winhighlight = 'Normal:NormalFloat', fillchars = 'eob: ' },
+    extensions = {
+      trash = { enabled = true },
+      git = { enabled = true },
+    },
+    mappings = {
+      n = {
+        ['<leader>E'] = { action = 'close' },
+        ['<C-S>'] = { disabled = true },
+        ['<C-V>'] = { disabled = true },
+        ['s'] = { action = 'select', args = { vsplit = true } },
+        ['S'] = { action = 'select', args = { split = true } },
+        ['-'] = { action = 'visit', args = { parent = true } },
+        -- Copy Path (Y)
+        ['Y'] = {
+          action = function(self)
+            local node = require('fyler.finder').parse_cursor_line(self)
+            if node and node.path then
+              vim.fn.setreg('+', node.path)
+              vim.notify('Copied: ' .. node.path)
             end
-          end
-        end,
+          end,
+        },
+        -- Open with System App (O), default xdg-open
+        ['O'] = {
+          action = function(self)
+            local node = require('fyler.finder').parse_cursor_line(self)
+            if node and node.path then
+              if vim.ui.open then
+                vim.ui.open(node.path)
+              else
+                vim.cmd('!xdg-open ' .. vim.fn.shellescape(node.path))
+              end
+            end
+          end,
+        },
       },
     },
-  },
   }
 end)
 

@@ -274,14 +274,6 @@ do
   --  - va)  - [V]isually select [A]round [)]paren
   --  - yiiq - [Y]ank [I]nside [I]+1 [Q]uote
   --  - ci'  - [C]hange [I]nside [']quote
-  require('mini.ai').setup {
-    -- NOTE: Avoid conflicts with the built-in incremental selection mappings on Neovim>=0.12 (see `:help treesitter-incremental-selection`)
-    mappings = {
-      around_next = 'aa',
-      inside_next = 'ii',
-    },
-    n_lines = 500,
-  }
 
   -- Add/delete/replace surroundings (brackets, quotes, etc.)
   --
@@ -718,7 +710,7 @@ do
   -- require 'kickstart.plugins.debug'
   require 'kickstart.plugins.indent_line'
   require 'kickstart.plugins.lint'
-  require 'kickstart.plugins.autopairs'
+  -- require 'kickstart.plugins.autopairs'
 
   -- NOTE: You can add your own plugins, configuration, etc. in `lua/custom/plugins/*.lua`.
   --
@@ -736,7 +728,7 @@ do
 
   require 'custom.plugins.util'
   require 'custom.plugins.ai'
-  -- require 'custom.plugins.coding'
+  require 'custom.plugins.coding'
   require 'custom.plugins.editor'
   require 'custom.plugins.extra'
   require 'custom.plugins.ui'

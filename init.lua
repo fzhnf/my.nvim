@@ -209,16 +209,37 @@ do
   require 'custom.plugins.ui'
   require 'custom.plugins.ai'
   require 'custom.plugins.extra'
+  require 'custom.plugins.dap'
 end
 
 -- ============================================================
 -- SECTION 5: LANGUAGE PARSERS & TOOLS
 -- ============================================================
 do
+  local vp = require 'custom.util.vimpack_helper'
   local lang = require 'custom.lang'
-  vim.list_extend(lang.tools, require 'custom.plugins.lsp') -- LSP servers (kept in sync with lsp.lua)
   local parsers, tools = lang.parsers, lang.tools
+
   require('nvim-treesitter').install(parsers)
+
+  -- ============================================================
+  -- mason.nvim
+  -- ============================================================
+  vim.pack.add {
+    vp.gh 'mason-org/mason.nvim',
+    vp.gh 'mason-org/mason-lspconfig.nvim',
+    vp.gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
+  }
+  -- Automatically install LSPs and related tools to stdpath for Neovim
+  require('mason').setup {}
+
+  -- ============================================================
+  -- mason-lspconfig.nvim
+  -- ============================================================
+  -- Translates between nvim-lspconfig server names and mason.nvim package names (e.g. lua_ls <-> lua-language-server)
+  require('mason-lspconfig').setup {
+    automatic_enable = false, -- Change this to true if you want to automatically enable servers that are installed manually (e.g. via :Mason / :MasonInstall)
+  }
   vim.schedule(function() require('mason-tool-installer').setup { ensure_installed = tools } end)
 end
 

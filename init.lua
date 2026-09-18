@@ -222,21 +222,22 @@ do
 
   require('nvim-treesitter').install(parsers)
 
-  -- ============================================================
   -- mason.nvim
-  -- ============================================================
   vim.pack.add {
     vp.gh 'mason-org/mason.nvim',
     vp.gh 'mason-org/mason-lspconfig.nvim',
     vp.gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
   }
-  -- Automatically install LSPs and related tools to stdpath for Neovim
-  require('mason').setup {}
+  -- Ensure the servers and tools are installed
+  --
+  -- To check the current status of installed tools and/or manually install
+  -- other tools, you can run
+  --    :Mason
+  --
+  -- You can press `g?` for help in this menu.
 
-  -- ============================================================
-  -- mason-lspconfig.nvim
-  -- ============================================================
   -- Translates between nvim-lspconfig server names and mason.nvim package names (e.g. lua_ls <-> lua-language-server)
+  require('mason').setup {}
   require('mason-lspconfig').setup {
     automatic_enable = false, -- Change this to true if you want to automatically enable servers that are installed manually (e.g. via :Mason / :MasonInstall)
   }

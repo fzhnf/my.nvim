@@ -1,8 +1,8 @@
-local lang = require 'custom.util.lang'
-
-lang.add_parser 'python'
-lang.add_tool { 'pyright', 'ruff' }
-
+---@class Custom.Lang.Module
+local M = {
+  parsers = { 'python' },
+  tools = { 'pyright', 'ruff' },
+}
 require('lint').linters_by_ft['python'] = { 'ruff' }
 require('conform').formatters_by_ft.python = { 'ruff_organize_imports', 'ruff_format' }
 
@@ -20,3 +20,5 @@ vim.api.nvim_create_autocmd('LspAttach', {
     if client and client.name == 'ruff' then client.server_capabilities.hoverProvider = false end
   end,
 })
+
+return M

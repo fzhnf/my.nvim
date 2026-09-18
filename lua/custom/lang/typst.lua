@@ -1,8 +1,11 @@
 local vp = require 'custom.util.vimpack_helper'
-local lang = require 'custom.util.lang'
 
-lang.add_parser 'typst'
-lang.add_tool 'tinymist'
+---@class Custom.Lang.Module
+local M = {
+  parsers = { 'typst' },
+  tools = { 'tinymist' },
+}
+
 vim.lsp.config('tinymist', { settings = { formatterMode = 'typstyle' } })
 vim.lsp.enable 'tinymist'
 
@@ -31,3 +34,5 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.keymap.set('n', '<leader>cP', '<cmd>LspTinymistPinMain<cr>', { buffer = args.buf, desc = 'Tinymist: Pin main file' })
   end,
 })
+
+return M

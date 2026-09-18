@@ -1,5 +1,7 @@
 local vp = require 'custom.util.vimpack_helper'
 
+vim.pack.add { vp.gh 'nvim-mini/mini.tabline' }
+
 require('mini.tabline').setup {
   -- Whether to show file icons (requires 'mini.icons')
   show_icons = true,
@@ -15,6 +17,31 @@ require('mini.tabline').setup {
 vim.keymap.set('n', '<S-h>', '<Cmd>bprevious<CR>', { desc = 'Prev Buffer' })
 vim.keymap.set('n', '<S-l>', '<Cmd>bnext<CR>', { desc = 'Next Buffer' })
 
+-- Simple and easy statusline.
+vim.pack.add { vp.gh 'nvim-mini/mini.statusline' }
+
+--  You could remove this setup call if you don't like it,
+--  and try some other statusline plugin
+local statusline = require 'mini.statusline'
+-- Set `use_icons` to true if you have a Nerd Font
+statusline.setup { use_icons = vim.g.have_nerd_font }
+
+-- You can configure sections in the statusline by overriding their
+-- default behavior. For example, here we set the section for
+-- cursor location to LINE:COLUMN
+---@diagnostic disable-next-line: duplicate-set-field
+statusline.section_location = function() return '%S %2l:%-2v' end
+
+-- Show macro recording (q..q) in the mode section
+local section_mode = statusline.section_mode
+---@diagnostic disable-next-line: duplicate-set-field
+statusline.section_mode = function(args)
+  local mode, hl = section_mode(args)
+  local reg = vim.fn.reg_recording()
+  if reg ~= '' then return mode .. ' 󰆃 ' .. reg, hl end
+  return mode, hl
+end
+
 require('vim._core.ui2').enable {}
 vim.pack.add { vp.gh 'rachartier/tiny-cmdline.nvim' }
 
@@ -23,14 +50,14 @@ require('tiny-cmdline').setup {
   on_reposition = require('tiny-cmdline').adapters.blink,
 }
 
--- Useful status updates for LSP.
-vim.pack.add { vp.gh 'j-hui/fidget.nvim' }
-require('fidget').setup {}
-
-vim.keymap.set('n', '<leader>qs', function() require('persisted').load() end, { desc = 'Restore Session' })
-vim.keymap.set('n', '<leader>qS', function() require('persisted').select() end, { desc = 'Select Session' })
-vim.keymap.set('n', '<leader>ql', function() require('persisted').load { last = true } end, { desc = 'Restore Last Session' })
-vim.keymap.set('n', '<leader>qd', function() require('persisted').stop() end, { desc = "Don't Save Current Session" })
+-- If a nerd font is available, load the icons module for pretty icons in various plugins.
+--
+if vim.g.have_nerd_font then
+  vim.pack.add { vp.gh 'nvim-mini/mini.icons' }
+  require('mini.icons').setup()
+  -- Used for backwards compatibility with plugins that require `nvim-web-devicons` (e.g. telescope.nvim)
+  MiniIcons.mock_nvim_web_devicons()
+end
 
 vim.pack.add { vp.gh 'nvimdev/dashboard-nvim' }
 
@@ -55,7 +82,8 @@ local center = {
   { icon = '󰒓  ', desc = 'Config', key = 'c', action = "lua require('mini.pick').builtin.files({}, {source={cwd=vim.fn.stdpath('config')}})" },
   { icon = '󰈆  ', desc = 'Quit', key = 'q', action = 'qa' },
 }
-local has_session = vim.fn.filereadable(require('persisted').current()) == 1
+local persisted_ok, persisted = pcall(require, 'persisted')
+local has_session = persisted_ok and vim.fn.filereadable(persisted.current()) == 1
 if has_session then
   table.insert(center, #center, {
     icon = '󰦛  ',
@@ -83,3 +111,18 @@ vim.api.nvim_create_autocmd('FileType', {
     if win then vim.wo[win].fillchars = 'eob: ' end
   end,
 })
+
+-- Useful status updates for LSP.
+vim.pack.add { vp.gh 'j-hui/fidget.nvim' }
+require('fidget').setup {}
+
+-- Add indentation guides even on blank lines
+
+-- Enable `lukas-reineke/indent-blankline.nvim`
+-- See `:help ibl`
+vim.pack.add { vp.gh 'lukas-reineke/indent-blankline.nvim' }
+require('ibl').setup {
+  exclude = {
+    filetypes = { 'dashboard' },
+  },
+}

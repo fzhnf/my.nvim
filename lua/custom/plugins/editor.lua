@@ -1,73 +1,23 @@
 local vp = require 'custom.util.vimpack_helper'
--- ============================================================
--- TREE BASED FILE EXPLORER
--- fyler.nvim
--- ============================================================
--- All four tools in this file (fyler, fff, leap, grug-far) are on-demand UI
--- tools: defer past first draw (guide: "load not during startup"). Keymaps
--- below resolve plugins lazily and are safe to define immediately.
-vim.schedule(function()
-  vim.pack.add { vp.gh 'FylerOrg/fyler.nvim' }
 
-  require('fyler').setup {
-    integrations = { icon = 'mini_icons' },
-    use_as_default_explorer = true,
-    kind = 'split_right_most',
-    kind_presets = { split_right_most = { width = '20%' } },
-    win_opts = { winhighlight = 'Normal:NormalFloat', fillchars = 'eob: ' },
-    extensions = {
-      trash = { enabled = true },
-      git = { enabled = true },
-    },
-    mappings = {
-      n = {
-        ['<leader>E'] = { action = 'close' },
-        ['<C-S>'] = { disabled = true },
-        ['<C-V>'] = { disabled = true },
-        ['s'] = { action = 'select', args = { vsplit = true } },
-        ['S'] = { action = 'select', args = { split = true } },
-        ['-'] = { action = 'visit', args = { parent = true } },
-        -- Copy Path (Y)
-        ['Y'] = {
-          action = function(self)
-            local node = require('fyler.finder').parse_cursor_line(self)
-            if node and node.path then
-              vim.fn.setreg('+', node.path)
-              vim.notify('Copied: ' .. node.path)
-            end
-          end,
-        },
-        -- Open with System App (O), default xdg-open
-        ['O'] = {
-          action = function(self)
-            local node = require('fyler.finder').parse_cursor_line(self)
-            if node and node.path then
-              if vim.ui.open then
-                vim.ui.open(node.path)
-              else
-                vim.cmd('!xdg-open ' .. vim.fn.shellescape(node.path))
-              end
-            end
-          end,
-        },
-      },
+-- ============================================================
+-- FIND & REPLACE
+-- grug-far.nvim
+-- ============================================================
+vim.schedule(function()
+  vim.pack.add { vp.gh 'MagicDuck/grug-far.nvim' }
+  require('grug-far').setup { headerMaxWidth = 80 }
+end)
+vim.keymap.set('n', '<leader>sr', function()
+  local grug = require 'grug-far'
+  local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
+  grug.open {
+    transient = true,
+    prefills = {
+      filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
     },
   }
-end)
-
-local function fyler_toggle()
-  local finder = require 'fyler.finder'
-  local inst = finder.instance_get_or_nil()
-  if not inst then
-    require('fyler').open { root_path = vim.uv.cwd() }
-  elseif inst.win_id == vim.api.nvim_get_current_win() then
-    require('fyler').close()
-  else
-    vim.api.nvim_set_current_win(inst.win_id)
-  end
-end
-
-vim.keymap.set('n', '<leader>e', function() fyler_toggle() end, { desc = 'Explorer Fyler' })
+end, { desc = '[S]earch and [R]eplace (grug-far)' })
 
 -- ============================================================
 -- SEARCH & NAVIGATION
@@ -109,15 +59,6 @@ vim.keymap.set('o', 'rr', function() -- "visit line" shortcut
   return (vim.v.count == 0 and '1' or '') .. '<Plug>(leap-visit)'
 end, { expr = true })
 
--- Automatic paste on return.
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'VisitDone',
-  group = vim.api.nvim_create_augroup('Visit', {}),
-  callback = function(event)
-    if (event.data.mode:match '^[vV\22]' or (vim.v.operator == 'y')) and event.data.register == '"' then vim.cmd 'normal! p' end
-  end,
-})
-
 -- Treeselect
 vim.keymap.set({ 'x', 'o' }, 'an', function()
   require('leap.treesitter').select {
@@ -126,23 +67,29 @@ vim.keymap.set({ 'x', 'o' }, 'an', function()
 end)
 
 -- ============================================================
--- FIND & REPLACE
--- grug-far.nvim
+-- KEYBIND GUIDE
+-- which-key.nvim
 -- ============================================================
-vim.schedule(function()
-  vim.pack.add { vp.gh 'MagicDuck/grug-far.nvim' }
-  require('grug-far').setup { headerMaxWidth = 80 }
-end)
-vim.keymap.set('n', '<leader>sr', function()
-  local grug = require 'grug-far'
-  local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
-  grug.open {
-    transient = true,
-    prefills = {
-      filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
-    },
-  }
-end, { desc = '[S]earch and [R]eplace (grug-far)' })
+
+-- Useful plugin to show you pending keybinds.
+vim.pack.add { vp.gh 'folke/which-key.nvim' }
+require('which-key').setup {
+  -- Delay between pressing a key and opening which-key (milliseconds)
+  delay = 0,
+  icons = { mappings = vim.g.have_nerd_font },
+  -- Document existing key chains
+  spec = {
+    { '<leader>b', group = '[B]uffers', mode = { 'n', 'v' } },
+    { '<leader>q', group = 'Session [Q]uery', mode = { 'n', 'v' } },
+    { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
+    { '<leader>f', group = '[F]ind', mode = { 'n', 'v' } },
+    { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
+    { '<leader>t', group = '[T]oggle' },
+    { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
+    { '<leader>u', group = '[U]I Toggles', mode = { 'n', 'v' } },
+    { '<leader>x', group = 'Diagnostics / [Q]uickfix', mode = { 'n', 'v' } },
+  },
+}
 
 -- ============================================================
 -- GIT RELATED
@@ -208,3 +155,80 @@ gitsigns.setup {
 -- Highlight todo, notes, etc in comments
 vim.pack.add { vp.gh 'folke/todo-comments.nvim' }
 require('todo-comments').setup { signs = false }
+
+-- ============================================================
+-- SMART INDENTATION
+-- guess-indent.nvim
+-- ============================================================
+
+vim.pack.add { vp.gh 'NMAC427/guess-indent.nvim' }
+require('guess-indent').setup {}
+
+-- ============================================================
+-- TREE BASED FILE EXPLORER
+-- fyler.nvim
+-- ============================================================
+vim.schedule(function()
+  vim.pack.add { vp.gh 'FylerOrg/fyler.nvim' }
+
+  require('fyler').setup {
+    integrations = { icon = 'mini_icons' },
+    use_as_default_explorer = true,
+    kind = 'split_right_most',
+    kind_presets = { split_right_most = { width = '20%' } },
+    win_opts = { winhighlight = 'Normal:NormalFloat', fillchars = 'eob: ' },
+    extensions = {
+      trash = { enabled = true },
+      git = { enabled = true },
+    },
+    mappings = {
+      n = {
+        ['<leader>E'] = { action = 'close', desc = 'Close fyler' },
+        ['<C-S>'] = { disabled = true, desc = 'Open in horizontal split (disabled)' },
+        ['<C-V>'] = { disabled = true, desc = 'Open in vertical split (disabled)' },
+        ['s'] = { action = 'select', args = { vsplit = true }, desc = 'Open in vertical split' },
+        ['S'] = { action = 'select', args = { split = true }, desc = 'Open in horizontal split' },
+        ['-'] = { action = 'visit', args = { parent = true }, desc = 'Go to parent directory' },
+        -- Copy Path (Y)
+        ['Y'] = {
+          action = function(self)
+            local node = require('fyler.finder').parse_cursor_line(self)
+            if node and node.path then
+              vim.fn.setreg('+', node.path)
+              vim.notify('Copied: ' .. node.path)
+            end
+          end,
+          desc = 'Copy path to clipboard',
+        },
+        -- Open with System App (O), default xdg-open
+        ['O'] = {
+          action = function(self)
+            local node = require('fyler.finder').parse_cursor_line(self)
+            if node and node.path then
+              if vim.ui.open then
+                vim.ui.open(node.path)
+              else
+                vim.cmd('!xdg-open ' .. vim.fn.shellescape(node.path))
+              end
+            end
+          end,
+          desc = 'Open with system app',
+        },
+      },
+    },
+  }
+end)
+
+local function fyler_toggle()
+  local finder = require 'fyler.finder'
+  local inst = finder.instance_get_or_nil()
+  if not inst then
+    require('fyler').open { root_path = vim.uv.cwd() }
+  elseif inst.win_id == vim.api.nvim_get_current_win() then
+    require('fyler').close()
+  else
+    vim.api.nvim_set_current_win(inst.win_id)
+  end
+end
+
+vim.keymap.set('n', '<leader>e', function() fyler_toggle() end, { desc = 'Explorer Fyler' })

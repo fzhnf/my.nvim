@@ -1,6 +1,8 @@
-local lang = require 'custom.util.lang'
-lang.add_parser { 'php', 'php_only', 'blade' }
-lang.add_tool 'phpactor'
+---@class Custom.Lang.Module
+local M = {
+  parsers = { 'php', 'php_only', 'blade' },
+  tools = { 'phpactor' },
+}
 
 require('lint').linters_by_ft['php'] = { 'phpstan' }
 require('conform').formatters_by_ft.php = { 'pint' }
@@ -16,3 +18,5 @@ vim.lsp.config('laravel_lsp', {
 
 vim.lsp.enable 'phpactor'
 vim.lsp.enable 'laravel_lsp'
+
+return M

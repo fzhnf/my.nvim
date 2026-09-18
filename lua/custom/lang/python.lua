@@ -4,7 +4,7 @@ local M = {
   tools = { 'pyright', 'ruff' },
 }
 require('lint').linters_by_ft['python'] = { 'ruff' }
-require('conform').formatters_by_ft.python = { 'ruff_organize_imports', 'ruff_format' }
+require('conform').formatters_by_ft['python'] = { 'ruff_organize_imports', 'ruff_format' }
 
 vim.lsp.config('ruff', {
   cmd_env = { RUFF_TRACE = 'messages' },

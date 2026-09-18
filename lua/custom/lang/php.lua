@@ -5,7 +5,7 @@ local M = {
 }
 
 require('lint').linters_by_ft['php'] = { 'phpstan' }
-require('conform').formatters_by_ft.php = { 'pint' }
+require('conform').formatters_by_ft['php'] = { 'pint' }
 
 vim.lsp.config('laravel_lsp', {
   cmd = { 'laravel-lsp' },

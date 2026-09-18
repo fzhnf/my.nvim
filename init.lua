@@ -733,7 +733,8 @@ do
   -- require 'custom.plugins.colorscheme'
   -- require 'custom.plugins.ui'
   -- require 'custom.plugins.git'
-  --
+
+  require 'custom.plugins.util'
   require 'custom.plugins.ai'
   -- require 'custom.plugins.coding'
   require 'custom.plugins.editor'

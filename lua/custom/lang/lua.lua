@@ -4,6 +4,8 @@ local M = {
   tools = { 'lua_ls', 'stylua' }, -- stylua: Used to format Lua code
 }
 
+require('conform').formatters_by_ft['lua'] = { 'stylua' }
+
 -- Special Lua Config, as recommended by neovim help docs
 vim.lsp.config('lua_ls', {
   on_init = function(client)

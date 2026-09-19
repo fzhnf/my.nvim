@@ -209,7 +209,7 @@ do
   require 'custom.plugins.ui'
   require 'custom.plugins.ai'
   require 'custom.plugins.extra'
-  require 'custom.plugins.dap'
+  -- require 'custom.plugins.dap'
 end
 
 -- ============================================================

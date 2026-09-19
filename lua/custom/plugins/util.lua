@@ -6,7 +6,9 @@ local vp = require 'custom.util.vimpack_helper'
 -- ============================================================
 vim.pack.add { vp.gh 'olimorris/persisted.nvim' }
 require('persisted').setup {
-  before_save = function() require('fyler').close() end,
+  before_save = function()
+    if package.loaded['fyler'] then require('fyler').close() end
+  end,
 }
 
 vim.keymap.set('n', '<leader>qs', function() require('persisted').load() end, { desc = 'Restore Session' })

@@ -1,30 +1,102 @@
 local vp = require 'custom.util.vimpack_helper'
 
--- ============================================================
--- FIND & REPLACE
--- grug-far.nvim
--- ============================================================
+vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
+  callback = function(args)
+    vim.api.nvim_del_autocmd(args.id)
+    -- ============================================================
+    -- GIT RELATED
+    -- gitsigns.nvim
+    -- ============================================================
+
+    -- Here is a more advanced configuration example that passes options to `gitsigns.nvim`
+    --
+    -- See `:help gitsigns` to understand what each configuration key does.
+    -- Adds git related signs to the gutter, as well as utilities for managing changes
+    vim.pack.add { vp.gh 'lewis6991/gitsigns.nvim' }
+    local gitsigns = require 'gitsigns'
+    gitsigns.setup {
+      signs = {
+        add = { text = '+' }, ---@diagnostic disable-line: missing-fields
+        change = { text = '~' }, ---@diagnostic disable-line: missing-fields
+        delete = { text = '_' }, ---@diagnostic disable-line: missing-fields
+        topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
+        changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
+      },
+      -- gitsigns.nvim's recommended keymaps:
+      on_attach = function(bufnr)
+        -- Navigation
+        vim.keymap.set('n', ']c', function()
+          if vim.wo.diff then
+            vim.cmd.normal { ']c', bang = true }
+          else
+            gitsigns.nav_hunk 'next'
+          end
+        end, { desc = 'Jump to next git [c]hange', buf = bufnr })
+
+        vim.keymap.set('n', '[c', function()
+          if vim.wo.diff then
+            vim.cmd.normal { '[c', bang = true }
+          else
+            gitsigns.nav_hunk 'prev'
+          end
+        end, { desc = 'Jump to previous git [c]hange', buf = bufnr })
+
+        -- Visual mode actions
+        vim.keymap.set('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [s]tage hunk', buf = bufnr })
+        vim.keymap.set('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [r]eset hunk', buf = bufnr })
+        -- Normal mode actions
+        vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk', buf = bufnr })
+        vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk', buf = bufnr })
+        vim.keymap.set('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer', buf = bufnr })
+        vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer', buf = bufnr })
+        vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk', buf = bufnr })
+        vim.keymap.set('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = 'git preview hunk [i]nline', buf = bufnr })
+        vim.keymap.set('n', '<leader>hb', function() gitsigns.blame_line { full = true } end, { desc = 'git [b]lame line', buf = bufnr })
+        vim.keymap.set('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index', buf = bufnr })
+        vim.keymap.set('n', '<leader>hD', function() gitsigns.diffthis '~' end, { desc = 'git [D]iff against last commit', buf = bufnr })
+        vim.keymap.set('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'git hunk [Q]uickfix list (all files in repo)', buf = bufnr })
+        vim.keymap.set('n', '<leader>hq', gitsigns.setqflist, { desc = 'git hunk [q]uickfix list (all changes in this file)', buf = bufnr })
+        -- Toggles
+        vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })
+        vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })
+        -- Text object
+        vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = 'text object [i]nside [h]unk', buf = bufnr })
+      end,
+    }
+
+    -- ============================================================
+    -- SMART INDENTATION
+    -- guess-indent.nvim
+    -- ============================================================
+    vim.pack.add { vp.gh 'NMAC427/guess-indent.nvim' }
+    require('guess-indent').setup {}
+  end,
+})
+
 vim.schedule(function()
+  -- ============================================================
+  -- FIND & REPLACE
+  -- grug-far.nvim
+  -- ============================================================
   vim.pack.add { vp.gh 'MagicDuck/grug-far.nvim' }
   require('grug-far').setup { headerMaxWidth = 80 }
-end)
-vim.keymap.set('n', '<leader>sr', function()
-  local grug = require 'grug-far'
-  local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
-  grug.open {
-    transient = true,
-    prefills = {
-      filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
-    },
-  }
-end, { desc = '[S]earch and [R]eplace (grug-far)' })
 
--- ============================================================
--- SEARCH & NAVIGATION
--- fff & leap.nvim
--- ============================================================
--- FFF
-vim.schedule(function()
+  vim.keymap.set('n', '<leader>sr', function()
+    local grug = require 'grug-far'
+    local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
+    grug.open {
+      transient = true,
+      prefills = {
+        filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
+      },
+    }
+  end, { desc = '[S]earch and [R]eplace (grug-far)' })
+
+  -- ============================================================
+  -- SEARCH & NAVIGATION
+  -- fff & leap.nvim
+  -- ============================================================
+  -- FFF
   vim.g.fff = {
     lazy_sync = true,
     debug = { enabled = false, show_scores = false },
@@ -32,47 +104,38 @@ vim.schedule(function()
   -- post-init `vim.pack.add` sources `plugin/` scripts immediately (load=true
   -- default), so the config must be set before the add.
   vim.pack.add { vp.gh 'dmtrKovalenko/fff' }
-end)
+  vim.keymap.set('n', '<leader><space>', function() require('fff').find_files() end, { desc = 'FFFind files' })
+  vim.keymap.set('n', '<leader>ff', function() require('fff').find_files() end, { desc = '[S]ind [F]iles (fff)' })
+  vim.keymap.set('n', '<leader>sg', function() require('fff').live_grep() end, { desc = '[S]earch by [G]rep (fff)' })
+  vim.keymap.set({ 'n', 'v' }, '<leader>sw', function() require('fff').live_grep_under_cursor() end, { desc = '[S]earch current [W]ord (fff)' })
+  vim.keymap.set('n', '<leader>sz', function() require('fff').live_grep { grep = { modes = { 'fuzzy', 'plain' } } } end, { desc = '[S]earch f[u]zzy (fff)' })
 
-vim.keymap.set('n', '<leader><space>', function() require('fff').find_files() end, { desc = 'FFFind files' })
-vim.keymap.set('n', '<leader>ff', function() require('fff').find_files() end, { desc = '[S]ind [F]iles (fff)' })
-vim.keymap.set('n', '<leader>sg', function() require('fff').live_grep() end, { desc = '[S]earch by [G]rep (fff)' })
-vim.keymap.set({ 'n', 'v' }, '<leader>sw', function() require('fff').live_grep_under_cursor() end, { desc = '[S]earch current [W]ord (fff)' })
-vim.keymap.set('n', '<leader>sz', function() require('fff').live_grep { grep = { modes = { 'fuzzy', 'plain' } } } end, { desc = '[S]earch f[u]zzy (fff)' })
-
--- LEAP.NVIM
-vim.schedule(function()
+  -- LEAP.NVIM
   vim.pack.add { 'https://codeberg.org/andyg/leap.nvim' }
   require('leap').opts.preview = false
   require('leap.user').set_backdrop_highlight 'Comment'
-end)
 
-vim.keymap.set({ 'n', 'x', 'o' }, '<CR>', '<Plug>(leap)')
-vim.keymap.set('n', 'S', '<Plug>(leap-from-window)')
+  vim.keymap.set({ 'n', 'x', 'o' }, '<CR>', '<Plug>(leap)')
+  vim.keymap.set('n', 'S', '<Plug>(leap-from-window)')
 
--- Visit (jump - operate - jump back)
-vim.keymap.set({ 'n', 'x', 'o' }, 'gs', '<Plug>(leap-visit)')
-vim.keymap.set({ 'x', 'o' }, 'ar', '<Plug>(leap-visit-text-object)')
-vim.keymap.set({ 'x', 'o' }, 'ir', '<Plug>(leap-visit-inner-text-object)')
+  -- Visit (jump - operate - jump back)
+  vim.keymap.set({ 'n', 'x', 'o' }, 'gs', '<Plug>(leap-visit)')
+  vim.keymap.set({ 'x', 'o' }, 'ar', '<Plug>(leap-visit-text-object)')
+  vim.keymap.set({ 'x', 'o' }, 'ir', '<Plug>(leap-visit-inner-text-object)')
 
-vim.keymap.set('o', 'rr', function() -- "visit line" shortcut
-  return (vim.v.count == 0 and '1' or '') .. '<Plug>(leap-visit)'
-end, { expr = true })
+  vim.keymap.set('o', 'rr', function() -- "visit line" shortcut
+    return (vim.v.count == 0 and '1' or '') .. '<Plug>(leap-visit)'
+  end, { expr = true })
 
--- Treeselect
-vim.keymap.set({ 'x', 'o' }, 'an', function()
-  require('leap.treesitter').select {
-    opts = require('leap.user').with_traversal_keys('n', 'N'),
-  }
-end)
+  -- Treeselect
+  vim.keymap.set({ 'x', 'o' }, 'an', function() require('leap.treesitter').select { opts = require('leap.user').with_traversal_keys('n', 'N') } end)
 
--- ============================================================
--- KEYBIND GUIDE
--- which-key.nvim
--- ============================================================
+  -- ============================================================
+  -- KEYBIND GUIDE
+  -- which-key.nvim
+  -- ============================================================
 
--- Useful plugin to show you pending keybinds.
-vim.schedule(function()
+  -- Useful plugin to show you pending keybinds.
   vim.pack.add { vp.gh 'folke/which-key.nvim' }
   require('which-key').setup {
     -- Delay between pressing a key and opening which-key (milliseconds)
@@ -91,114 +154,15 @@ vim.schedule(function()
       { '<leader>x', group = 'Diagnostics / [Q]uickfix', mode = { 'n', 'v' } },
     },
   }
-end)
 
--- ============================================================
--- GIT RELATED
--- gitsigns.nvim
--- ============================================================
-
--- Here is a more advanced configuration example that passes options to `gitsigns.nvim`
---
--- See `:help gitsigns` to understand what each configuration key does.
--- Adds git related signs to the gutter, as well as utilities for managing changes
-vim.pack.add({
-  {
-    src = vp.gh 'lewis6991/gitsigns.nvim',
-    data = {
-      opts = {
-        signs = {
-          add = { text = '+' }, ---@diagnostic disable-line: missing-fields
-          change = { text = '~' }, ---@diagnostic disable-line: missing-fields
-          delete = { text = '_' }, ---@diagnostic disable-line: missing-fields
-          topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
-          changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
-        },
-        -- gitsigns.nvim's recommended keymaps:
-        on_attach = function(bufnr)
-          local gitsigns = require 'gitsigns'
-          -- Navigation
-          vim.keymap.set('n', ']c', function()
-            if vim.wo.diff then
-              vim.cmd.normal { ']c', bang = true }
-            else
-              gitsigns.nav_hunk 'next'
-            end
-          end, { desc = 'Jump to next git [c]hange', buf = bufnr })
-
-          vim.keymap.set('n', '[c', function()
-            if vim.wo.diff then
-              vim.cmd.normal { '[c', bang = true }
-            else
-              gitsigns.nav_hunk 'prev'
-            end
-          end, { desc = 'Jump to previous git [c]hange', buf = bufnr })
-
-          -- Visual mode actions
-          vim.keymap.set('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [s]tage hunk', buf = bufnr })
-          vim.keymap.set('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [r]eset hunk', buf = bufnr })
-          -- Normal mode actions
-          vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk', buf = bufnr })
-          vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk', buf = bufnr })
-          vim.keymap.set('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer', buf = bufnr })
-          vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer', buf = bufnr })
-          vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk', buf = bufnr })
-          vim.keymap.set('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = 'git preview hunk [i]nline', buf = bufnr })
-          vim.keymap.set('n', '<leader>hb', function() gitsigns.blame_line { full = true } end, { desc = 'git [b]lame line', buf = bufnr })
-          vim.keymap.set('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index', buf = bufnr })
-          vim.keymap.set('n', '<leader>hD', function() gitsigns.diffthis '~' end, { desc = 'git [D]iff against last commit', buf = bufnr })
-          vim.keymap.set('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'git hunk [Q]uickfix list (all files in repo)', buf = bufnr })
-          vim.keymap.set('n', '<leader>hq', gitsigns.setqflist, { desc = 'git hunk [q]uickfix list (all changes in this file)', buf = bufnr })
-          -- Toggles
-          vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })
-          vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })
-          -- Text object
-          vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = 'text object [i]nside [h]unk', buf = bufnr })
-        end,
-      },
-    },
-  },
-}, {
-  load = function(plug_data)
-    vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
-      callback = function(args)
-        vim.cmd.packadd(plug_data.spec.name)
-        local gitsigns = require 'gitsigns'
-        gitsigns.setup(plug_data.spec.data.opts)
-        vim.api.nvim_del_autocmd(args.id)
-      end,
-    })
-  end,
-})
-
--- Highlight todo, notes, etc in comments
-vim.schedule(function()
+  -- Highlight todo, notes, etc in comments
   vim.pack.add { vp.gh 'folke/todo-comments.nvim' }
   require('todo-comments').setup { signs = false }
-end)
 
--- ============================================================
--- SMART INDENTATION
--- guess-indent.nvim
--- ============================================================
-
-vim.pack.add({ vp.gh 'NMAC427/guess-indent.nvim' }, {
-  load = function(plug_data)
-    vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
-      callback = function(args)
-        vim.cmd.packadd(plug_data.spec.name)
-        require('guess-indent').setup {}
-        vim.api.nvim_del_autocmd(args.id)
-      end,
-    })
-  end,
-})
-
--- ============================================================
--- TREE BASED FILE EXPLORER
--- fyler.nvim
--- ============================================================
-vim.schedule(function()
+  -- ============================================================
+  -- TREE BASED FILE EXPLORER
+  -- fyler.nvim
+  -- ============================================================
   vim.pack.add { vp.gh 'FylerOrg/fyler.nvim' }
 
   require('fyler').setup {
@@ -247,18 +211,18 @@ vim.schedule(function()
       },
     },
   }
-end)
 
-local function fyler_toggle()
-  local finder = require 'fyler.finder'
-  local inst = finder.instance_get_or_nil()
-  if not inst then
-    require('fyler').open { root_path = vim.uv.cwd() }
-  elseif inst.win_id == vim.api.nvim_get_current_win() then
-    require('fyler').close()
-  else
-    vim.api.nvim_set_current_win(inst.win_id)
+  local function fyler_toggle()
+    local finder = require 'fyler.finder'
+    local inst = finder.instance_get_or_nil()
+    if not inst then
+      require('fyler').open { root_path = vim.uv.cwd() }
+    elseif inst.win_id == vim.api.nvim_get_current_win() then
+      require('fyler').close()
+    else
+      vim.api.nvim_set_current_win(inst.win_id)
+    end
   end
-end
 
-vim.keymap.set('n', '<leader>e', function() fyler_toggle() end, { desc = 'Explorer Fyler' })
+  vim.keymap.set('n', '<leader>e', function() fyler_toggle() end, { desc = 'Explorer Fyler' })
+end)

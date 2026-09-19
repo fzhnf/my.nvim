@@ -44,7 +44,7 @@ local function treesitter_try_attach(buf, language)
   if has_indent_query then vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()" end
 end
 
-local available_parsers = require('nvim-treesitter').get_available()
+local available_parsers ---@type string[]|nil
 vim.api.nvim_create_autocmd('FileType', {
   callback = function(args)
     local buf, filetype = args.buf, args.match
@@ -53,6 +53,7 @@ vim.api.nvim_create_autocmd('FileType', {
     if not language then return end
 
     local installed_parsers = require('nvim-treesitter').get_installed 'parsers'
+    if not available_parsers then available_parsers = require('nvim-treesitter').get_available() end
 
     if vim.tbl_contains(installed_parsers, language) then
       -- Enable the parser if it is already installed

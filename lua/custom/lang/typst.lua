@@ -9,21 +9,12 @@ local M = {
 vim.lsp.config('tinymist', { settings = { formatterMode = 'typstyle' } })
 vim.lsp.enable 'tinymist'
 
-vim.pack.add({
-  {
-    src = vp.gh 'chomosuke/typst-preview.nvim',
-    data = { opts = { dependencies_bin = { tinymist = 'tinymist' } } },
-  },
-}, {
-  load = function(plug_data)
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = 'typst',
-      once = true,
-      callback = function()
-        vim.cmd.packadd(plug_data.spec.name)
-        require('typst-preview').setup(plug_data.spec.data.opts)
-      end,
-    })
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'typst',
+  once = true,
+  callback = function()
+    vim.pack.add { vp.gh 'chomosuke/typst-preview.nvim' }
+    require('typst-preview').setup { dependencies_bin = { tinymist = 'tinymist' } }
   end,
 })
 

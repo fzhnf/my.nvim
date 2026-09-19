@@ -59,8 +59,6 @@ if vim.g.have_nerd_font then
   MiniIcons.mock_nvim_web_devicons()
 end
 
-vim.pack.add { vp.gh 'nvimdev/dashboard-nvim' }
-
 local header = [[
         ⢰⡀⠀⣠⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⠀⠀⢰⡀⢀⡆⠀⠀⠀⢀⡀⠀⠀⠀⠀⣆
 ⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠀⠀⣀⣠⠄⠸⡷⠄⢹⡧⠀⢀⡀⠀⠀⠍⠛⠀⣀⣤⠤⠖⢸⡷⠀⣿⠆⠀⢀⠀⢳⠀⠀⠀⠀⣿⠆⠀⠀⠀⠀⠀⠀⣀
@@ -82,47 +80,84 @@ local center = {
   { icon = '󰒓  ', desc = 'Config', key = 'c', action = "lua require('mini.pick').builtin.files({}, {source={cwd=vim.fn.stdpath('config')}})" },
   { icon = '󰈆  ', desc = 'Quit', key = 'q', action = 'qa' },
 }
-local persisted_ok, persisted = pcall(require, 'persisted')
-local has_session = persisted_ok and vim.fn.filereadable(persisted.current()) == 1
-if has_session then
-  table.insert(center, #center, {
-    icon = '󰦛  ',
-    desc = 'Restore Session',
-    key = 's',
-    action = "lua require('persisted').load()",
-  })
-end
-require('dashboard').setup {
-  theme = 'doom',
-  config = {
-    header = vim.split(header, '\n'),
-    center = center,
-    vertical_center = true,
+
+vim.pack.add({
+  {
+    src = vp.gh 'nvimdev/dashboard-nvim',
+    data = {
+      opts = {
+        theme = 'doom',
+        config = {
+          header = vim.split(header, '\n'),
+          center = center,
+          vertical_center = true,
+        },
+      },
+    },
   },
-}
-vim.api.nvim_set_hl(0, 'DashboardHeader', { link = 'String' })
-vim.api.nvim_set_hl(0, 'DashboardIcon', { link = 'Type' })
-vim.api.nvim_set_hl(0, 'DashboardDesc', { link = 'Function' })
-vim.api.nvim_set_hl(0, 'DashboardKey', { link = 'Keyword' })
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'dashboard' },
-  callback = function(ev)
-    local win = vim.iter(vim.api.nvim_list_wins()):find(function(w) return vim.api.nvim_win_get_buf(w) == ev.buf end)
-    if win then vim.wo[win].fillchars = 'eob: ' end
+}, {
+
+  load = function(plug_data)
+    if vim.fn.argc() == 0 then
+      vim.cmd.packadd(plug_data.spec.name)
+
+      local opts = plug_data.spec.data.opts
+      local persisted_ok, persisted = pcall(require, 'persisted')
+      local has_session = persisted_ok and vim.fn.filereadable(persisted.current()) == 1
+      if has_session then
+        table.insert(opts.config.center, #opts.config.center, {
+          icon = '󰦛  ',
+          desc = 'Restore Session',
+          key = 's',
+          action = "lua require('persisted').load()",
+        })
+      end
+      require('dashboard').setup(opts)
+      vim.api.nvim_set_hl(0, 'DashboardHeader', { link = 'String' })
+      vim.api.nvim_set_hl(0, 'DashboardIcon', { link = 'Type' })
+      vim.api.nvim_set_hl(0, 'DashboardDesc', { link = 'Function' })
+      vim.api.nvim_set_hl(0, 'DashboardKey', { link = 'Keyword' })
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = { 'dashboard' },
+        callback = function(ev)
+          local win = vim.iter(vim.api.nvim_list_wins()):find(function(w) return vim.api.nvim_win_get_buf(w) == ev.buf end)
+          if win then vim.wo[win].fillchars = 'eob: ' end
+        end,
+      })
+    end
   end,
 })
 
 -- Useful status updates for LSP.
-vim.pack.add { vp.gh 'j-hui/fidget.nvim' }
-require('fidget').setup {}
+vim.pack.add({ vp.gh 'j-hui/fidget.nvim' }, {
+  load = function(plug_data)
+    vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
+      callback = function(args)
+        vim.cmd.packadd(plug_data.spec.name)
+        require('fidget').setup {}
+        vim.api.nvim_del_autocmd(args.id)
+      end,
+    })
+  end,
+})
 
 -- Add indentation guides even on blank lines
 
 -- Enable `lukas-reineke/indent-blankline.nvim`
 -- See `:help ibl`
-vim.pack.add { vp.gh 'lukas-reineke/indent-blankline.nvim' }
-require('ibl').setup {
-  exclude = {
-    filetypes = { 'dashboard' },
+vim.pack.add({
+  {
+    src = vp.gh 'lukas-reineke/indent-blankline.nvim',
+    data = { opts = { exclude = { filetypes = { 'dashboard' } } } },
   },
-}
+}, {
+  load = function(plug_data)
+    vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
+      callback = function(args)
+        vim.cmd.packadd(plug_data.spec.name)
+        require('ibl').setup(plug_data.spec.data.opts)
+        vim.api.nvim_del_autocmd(args.id)
+      end,
+    })
+  end,
+})

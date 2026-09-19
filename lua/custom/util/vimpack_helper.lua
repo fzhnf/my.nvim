@@ -5,4 +5,9 @@ local M = {}
 ---@return string
 function M.gh(repo) return 'https://github.com/' .. repo end
 
+-- Also for Codeberg as the second platform with most plugins
+---@param repo string
+---@return string
+function M.cb(repo) return 'https://codeberg.org/' .. repo end
+
 return M

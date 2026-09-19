@@ -3,6 +3,7 @@ local vp = require 'custom.util.vimpack_helper'
 vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
   callback = function(args)
     vim.api.nvim_del_autocmd(args.id)
+    vim.pack.add { vp.gh 'lewis6991/gitsigns.nvim', vp.gh 'NMAC427/guess-indent.nvim' }
     -- ============================================================
     -- GIT RELATED
     -- gitsigns.nvim
@@ -12,7 +13,6 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
     --
     -- See `:help gitsigns` to understand what each configuration key does.
     -- Adds git related signs to the gutter, as well as utilities for managing changes
-    vim.pack.add { vp.gh 'lewis6991/gitsigns.nvim' }
     local gitsigns = require 'gitsigns'
     gitsigns.setup {
       signs = {
@@ -68,42 +68,50 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
     -- SMART INDENTATION
     -- guess-indent.nvim
     -- ============================================================
-    vim.pack.add { vp.gh 'NMAC427/guess-indent.nvim' }
     require('guess-indent').setup {}
+
+    -- Highlight todo, notes, etc in comments
+    vim.pack.add { vp.gh 'folke/todo-comments.nvim' }
+    require('todo-comments').setup { signs = false }
   end,
 })
 
+-- ============================================================
+-- FIND & REPLACE
+-- grug-far.nvim
+-- ============================================================
+vim.keymap.set('n', '<leader>sr', function()
+  if not package.loaded['grug-far'] then
+    vim.pack.add { vp.gh 'MagicDuck/grug-far.nvim' }
+    require('grug-far').setup { headerMaxWidth = 80 }
+  end
+
+  local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
+  require('grug-far').open {
+    transient = true,
+    prefills = { filesFilter = ext and ext ~= '' and '*.' .. ext or nil },
+  }
+end, { desc = '[S]earch and [R]eplace (grug-far)' })
+
 vim.schedule(function()
-  -- ============================================================
-  -- FIND & REPLACE
-  -- grug-far.nvim
-  -- ============================================================
-  vim.pack.add { vp.gh 'MagicDuck/grug-far.nvim' }
-  require('grug-far').setup { headerMaxWidth = 80 }
+  vim.g.fff = {
+    lazy_sync = true,
+    debug = { enabled = false, show_scores = false },
+  }
 
-  vim.keymap.set('n', '<leader>sr', function()
-    local grug = require 'grug-far'
-    local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
-    grug.open {
-      transient = true,
-      prefills = {
-        filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
-      },
-    }
-  end, { desc = '[S]earch and [R]eplace (grug-far)' })
-
+  vim.pack.add {
+    vp.gh 'dmtrKovalenko/fff',
+    vp.cb 'andyg/leap.nvim',
+    vp.gh 'folke/which-key.nvim',
+    vp.gh 'FylerOrg/fyler.nvim',
+  }
   -- ============================================================
   -- SEARCH & NAVIGATION
   -- fff & leap.nvim
   -- ============================================================
   -- FFF
-  vim.g.fff = {
-    lazy_sync = true,
-    debug = { enabled = false, show_scores = false },
-  }
   -- post-init `vim.pack.add` sources `plugin/` scripts immediately (load=true
   -- default), so the config must be set before the add.
-  vim.pack.add { vp.gh 'dmtrKovalenko/fff' }
   vim.keymap.set('n', '<leader><space>', function() require('fff').find_files() end, { desc = 'FFFind files' })
   vim.keymap.set('n', '<leader>ff', function() require('fff').find_files() end, { desc = '[S]ind [F]iles (fff)' })
   vim.keymap.set('n', '<leader>sg', function() require('fff').live_grep() end, { desc = '[S]earch by [G]rep (fff)' })
@@ -111,7 +119,6 @@ vim.schedule(function()
   vim.keymap.set('n', '<leader>sz', function() require('fff').live_grep { grep = { modes = { 'fuzzy', 'plain' } } } end, { desc = '[S]earch f[u]zzy (fff)' })
 
   -- LEAP.NVIM
-  vim.pack.add { 'https://codeberg.org/andyg/leap.nvim' }
   require('leap').opts.preview = false
   require('leap.user').set_backdrop_highlight 'Comment'
 
@@ -136,7 +143,6 @@ vim.schedule(function()
   -- ============================================================
 
   -- Useful plugin to show you pending keybinds.
-  vim.pack.add { vp.gh 'folke/which-key.nvim' }
   require('which-key').setup {
     -- Delay between pressing a key and opening which-key (milliseconds)
     delay = 0,
@@ -155,15 +161,10 @@ vim.schedule(function()
     },
   }
 
-  -- Highlight todo, notes, etc in comments
-  vim.pack.add { vp.gh 'folke/todo-comments.nvim' }
-  require('todo-comments').setup { signs = false }
-
   -- ============================================================
   -- TREE BASED FILE EXPLORER
   -- fyler.nvim
   -- ============================================================
-  vim.pack.add { vp.gh 'FylerOrg/fyler.nvim' }
 
   require('fyler').setup {
     integrations = { icon = 'mini_icons' },

@@ -1,9 +1,5 @@
 local vp = require 'custom.util.vimpack_helper'
 
--- auto pairing two "paired" characters (brackets, tags, etc.)
-vim.pack.add { 'https://github.com/nvim-mini/mini.pairs' }
-require('mini.pairs').setup {}
-
 -- Better Around/Inside textobjects
 --
 -- Examples:
@@ -39,10 +35,14 @@ vim.api.nvim_create_autocmd('InsertEnter', {
   once = true,
   callback = function()
     vim.pack.add {
+      'https://github.com/nvim-mini/mini.pairs',
       { src = vp.gh 'L3MON4D3/LuaSnip', version = vim.version.range '2.*' },
       { src = vp.gh 'rafamadriz/friendly-snippets' },
       { src = vp.gh 'saghen/blink.cmp', version = vim.version.range '1.*' },
     }
+
+    -- auto pairing two "paired" characters (brackets, tags, etc.)
+    require('mini.pairs').setup {}
 
     -- [[ Snippet Engine ]]
 

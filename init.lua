@@ -237,11 +237,13 @@ do
   -- You can press `g?` for help in this menu.
 
   -- Translates between nvim-lspconfig server names and mason.nvim package names (e.g. lua_ls <-> lua-language-server)
-  require('mason').setup {}
-  require('mason-lspconfig').setup {
-    automatic_enable = false, -- Change this to true if you want to automatically enable servers that are installed manually (e.g. via :Mason / :MasonInstall)
-  }
-  vim.schedule(function() require('mason-tool-installer').setup { ensure_installed = tools } end)
+  vim.schedule(function()
+    require('mason').setup {}
+    require('mason-lspconfig').setup {
+      automatic_enable = false, -- Change this to true if you want to automatically enable servers that are installed manually (e.g. via :Mason / :MasonInstall)
+    }
+    require('mason-tool-installer').setup { ensure_installed = tools }
+  end)
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`

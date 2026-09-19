@@ -1,7 +1,7 @@
 ---@class Custom.Lang.Module
 local M = {
   parsers = { 'go', 'gomod', 'gowork', 'gosum' },
-  tools = { 'goimports', 'gofumpt', 'gomodifytags', 'impl', 'golangci-lint', 'delve' },
+  tools = { 'goimports', 'gofumpt', 'gomodifytags', 'impl', 'golangci-lint' },
 }
 
 vim.lsp.config('gopls', {

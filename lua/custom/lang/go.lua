@@ -2,6 +2,8 @@
 local M = {
   parsers = { 'go', 'gomod', 'gowork', 'gosum' },
   tools = { 'goimports', 'gofumpt', 'gomodifytags', 'impl', 'golangci-lint' },
+  formatters_by_ft = { go = { 'goimports', 'gofumpt' } },
+  linters_by_ft = { go = { 'golangcilint' } },
 }
 
 vim.lsp.config('gopls', {
@@ -16,8 +18,5 @@ vim.lsp.config('gopls', {
 })
 
 vim.lsp.enable 'gopls'
-
-require('lint').linters_by_ft['go'] = { 'golangcilint' }
-require('conform').formatters_by_ft['go'] = { 'goimports', 'gofumpt' }
 
 return M

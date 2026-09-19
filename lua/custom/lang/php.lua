@@ -2,10 +2,9 @@
 local M = {
   parsers = { 'php', 'php_only', 'blade' },
   tools = { 'phpactor' },
+  formatters_by_ft = { php = { 'pint' } },
+  linters_by_ft = { php = { 'phpstan' } },
 }
-
-require('lint').linters_by_ft['php'] = { 'phpstan' }
-require('conform').formatters_by_ft['php'] = { 'pint' }
 
 vim.lsp.config('laravel_lsp', {
   cmd = { 'laravel-lsp' },

@@ -60,25 +60,36 @@ if vim.g.have_nerd_font then
 end
 
 if vim.fn.argc() == 0 then
-  vim.pack.add { vp.gh 'nvimdev/dashboard-nvim' }
+  vim.pack.add { vp.gh 'nvimdev/dashboard-nvim', vp.gh 'nvim-mini/mini.pick' }
 
   local persisted_ok, persisted = pcall(require, 'persisted')
   local has_session = persisted_ok and vim.fn.filereadable(persisted.current()) == 1
+  local picker = require 'mini.pick'
 
   local center = {
-    { icon = '󰈞  ', desc = 'Find File', key = 'f', action = "lua require('fff').find_files()" },
-    { icon = '󰝒  ', desc = 'New File', key = 'n', action = 'ene | startinsert' },
-    { icon = '󰱼  ', desc = 'Find Text', key = 'g', action = "lua require('fff').live_grep()" },
-    { icon = '󰄉  ', desc = 'Recent Files', key = 'r', action = "lua require('mini.pick').start({source={name='Recent Files', items=vim.v.oldfiles}})" },
-    { icon = '󰒓  ', desc = 'Config', key = 'c', action = "lua require('mini.pick').builtin.files({}, {source={cwd=vim.fn.stdpath('config')}})" },
-    { icon = '󰈆  ', desc = 'Quit', key = 'q', action = 'qa' },
+    { icon = '󰈞  ', desc = 'Find File', key = 'f', action = function() require('fff').find_files() end },
+    { icon = '󰝒  ', desc = 'New File', key = 'n', action = function() vim.cmd.enew() end },
+    { icon = '󰱼  ', desc = 'Find Text', key = 'g', action = function() require('fff').live_grep() end },
+    {
+      icon = '󰄉  ',
+      desc = 'Recent Files',
+      key = 'r',
+      action = function() picker.start { source = { name = 'Recent Files', items = vim.v.oldfiles } } end,
+    },
+    {
+      icon = '󰒓  ',
+      desc = 'Config',
+      key = 'c',
+      action = function() picker.builtin.files({}, { source = { cwd = vim.fn.stdpath 'config' } }) end,
+    },
+    { icon = '󰈆  ', desc = 'Quit', key = 'q', action = 'q' },
   }
   if has_session then
     table.insert(center, #center, {
       icon = '󰦛  ',
       desc = 'Restore Session',
       key = 's',
-      action = "lua require('persisted').load()",
+      action = function() persisted.load() end,
     })
   end
 

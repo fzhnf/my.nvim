@@ -1,4 +1,5 @@
 local vp = require 'custom.util.vimpack_helper'
+local lang = require 'custom.lang'
 --  Used to highlight, edit, and navigate code
 --
 --  See `:help nvim-treesitter-intro`
@@ -7,21 +8,7 @@ local vp = require 'custom.util.vimpack_helper'
 vim.pack.add { { src = vp.gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
 -- Ensure basic parsers are installed
-local parsers = {
-  'bash',
-  'c',
-  'diff',
-  'html',
-  'lua',
-  'luadoc',
-  'query',
-  'vim',
-  'vimdoc',
-  'html',
-  'css',
-  'javascript',
-}
-require('nvim-treesitter').install(parsers)
+require('nvim-treesitter').install(lang.parsers)
 
 ---@param buf integer
 ---@param language string
